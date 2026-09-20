@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Academic Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="sticky top-0 z-40 glass border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('landing')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Smart Academic Platform</span>
+                        <span class="block text-[10px] text-slate-500 font-semibold tracking-wider uppercase">Academic Portal</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button id="credentialsBtn" onclick="openCredentialsModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-key"></i> Test Credentials
+                    </button>
+
+                    <button id="themeToggle" onclick="toggleTheme()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                        <i class="fa-solid fa-sun hidden dark:block text-amber-400 text-lg"></i>
+                    </button>
+
+                    <div id="navUserBadge" class="hidden flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-800">
+                        <span id="navUserName" class="text-sm font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline"></span>
+                        <button onclick="logout()" class="px-3 py-1.5 text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-950/40 dark:text-red-400 rounded-lg transition">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- VIEW 1: LANDING & LOGIN -->
+        <div id="viewLanding" class="max-w-4xl mx-auto my-8">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-3">
+                    Smart Academic Portal
+                </h1>
+                <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">
+                    View your internal marks, estimated targets, and academic recommendations for upcoming semester exams.
+                </p>
+            </div>
+
+            <!-- Portal Mode Selector -->
+            <div class="flex justify-center mb-8">
+                <div class="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl flex gap-1">
+                    <button id="tabBtnStudent" onclick="switchLoginTab('student')" class="px-6 py-2.5 rounded-lg text-sm font-bold transition shadow-sm bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400">
+                        <i class="fa-solid fa-user-graduate mr-2"></i>Student Portal
+                    </button>
+                    <button id="tabBtnFaculty" onclick="switchLoginTab('faculty')" class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 transition hover:text-slate-900">
+                        <i class="fa-solid fa-chalkboard-user mr-2"></i>Faculty Portal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Login Card -->
+            <div class="max-w-md mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-6 sm:p-8">
+                
+                <!-- Student Login Form -->
+                <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-5">
+                    <div class="text-center mb-4">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Student Portal Access</h2>
+                        <p class="text-xs text-slate-500 mt-1">Enter your Roll Number and Date of Birth (DDMMYYYY)</p>
+                    </div>
+
+                    <div id="studentLoginError" class="hidden p-3 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-300 text-xs font-medium text-center flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>Invalid Roll Number or Password (DOB). Check credentials.</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Roll Number</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-id-card absolute left-3.5 top-3 text-slate-400"></i>
+                            <input type="text" id="studRoll" required placeholder="e.g., 2023CSE001" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Date of Birth (DDMMYYYY)</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-calendar-days absolute left-3.5 top-3 text-slate-400"></i>
+                            <input type="password" id="studDob" required placeholder="DDMMYYYY" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/20 transition duration-150">
+                        View Student Dashboard <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </form>
+
+                <!-- Faculty Login Form -->
+                <form id="facultyLoginForm" onsubmit="handleFacultyLogin(event)" class="space-y-5 hidden">
+                    <div class="text-center mb-4">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Faculty Management Portal</h2>
+                        <p class="text-xs text-slate-500 mt-1">Authorized Staff Login (e.g. FAC_CSE / admin123)</p>
+                    </div>
+
+                    <div id="facultyLoginError" class="hidden p-3 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-300 text-xs font-medium text-center flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>Invalid Faculty ID or Password.</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Faculty ID</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user-tie absolute left-3.5 top-3 text-slate-400"></i>
+                            <input type="text" id="facId" required placeholder="e.g., FAC_CSE" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">Password</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400"></i>
+                            <input type="password" id="facPass" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-purple-500/20 transition duration-150">
+                        Log In as Faculty <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- VIEW 2: STUDENT DASHBOARD -->
+        <div id="viewStudentDashboard" class="hidden space-y-6">
+            
+            <!-- Student Header Banner -->
+            <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                            <span id="dashDeptBadge" class="px-2.5 py-1 bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 rounded-md text-xs font-semibold">Dept</span>
+                            <span id="dashYearBadge" class="px-2.5 py-1 bg-purple-500/30 text-purple-200 border border-purple-400/30 rounded-md text-xs font-semibold">Batch</span>
+                            <span id="dashCategoryBadge" class="px-2.5 py-1 bg-amber-500/30 text-amber-200 border border-amber-400/30 rounded-md text-xs font-semibold">Category</span>
+                        </div>
+                        <h1 id="dashStudentName" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Student Name</h1>
+                        <p class="text-slate-300 text-xs sm:text-sm mt-1">Roll No: <span id="dashRollNo" class="font-mono font-semibold text-indigo-300"></span> | DOB: <span id="dashDob" class="font-mono text-slate-300"></span></p>
+                    </div>
+
+                    <!-- Rank Card Highlight -->
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 text-center min-w-[200px]">
+                        <span class="text-xs font-medium text-indigo-200 uppercase tracking-wider block">Class Rank</span>
+                        <div id="dashClassRank" class="text-2xl font-extrabold text-amber-300 my-1">Rank -- of --</div>
+                        <span id="dashRankDetail" class="text-[11px] text-slate-300 block">Current Cohort Performance</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics Overview -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Internal Average</span>
+                        <div id="metricCgpa" class="text-2xl font-black text-slate-900 dark:text-white mt-1">0 / 40</div>
+                        <span class="text-[10px] text-slate-500">Scale 40 Marks</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Attendance Rate</span>
+                        <div id="metricAttendance" class="text-2xl font-black text-slate-900 dark:text-white mt-1">0%</div>
+                        <span class="text-[10px] text-slate-500">Current Semester</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-clipboard-user"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Internal Subject</span>
+                        <div id="metricStrongSubject" class="text-sm font-bold text-slate-900 dark:text-white mt-1 truncate max-w-[130px]">-</div>
+                        <span id="metricStrongScore" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">0 Marks</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Needs Focus</span>
+                        <div id="metricWeakSubject" class="text-sm font-bold text-slate-900 dark:text-white mt-1 truncate max-w-[130px]">-</div>
+                        <span id="metricWeakScore" class="text-[10px] text-rose-600 dark:text-rose-400 font-semibold">0 Marks</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1: PREVIOUS SEMESTER GRADES -->
+            <div class="bg-gradient-to-r from-purple-900/10 via-indigo-900/10 to-slate-900/10 dark:from-purple-950/40 dark:to-slate-900 rounded-2xl p-6 border border-purple-200/60 dark:border-purple-800/60 shadow-sm">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <div>
+                            <h3 id="prevSemHeading" class="text-lg font-bold text-slate-900 dark:text-white">Previous Semester Academic Report</h3>
+                            <p class="text-xs text-slate-500">Official archived grade performance summary</p>
+                        </div>
+                    </div>
+                    <span id="prevSemGpaBadge" class="px-3 py-1.5 rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-xs font-bold border border-purple-300 dark:border-purple-800">
+                        Previous Sem GPA: --
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-100 dark:bg-slate-900/80 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="py-3 px-4">Subject Name</th>
+                                <th class="py-3 px-4 text-center">Credit Points</th>
+                                <th class="py-3 px-4 text-center">Grade Point</th>
+                                <th class="py-3 px-4 text-center">Letter Grade</th>
+                                <th class="py-3 px-4 text-center">Result Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prevSemMarksTableBody" class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-300">
+                            <!-- Dynamic Previous Semester Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 2: CURRENT SEMESTER SUBJECT BREAKDOWN & TEACHER FEEDBACK -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700 overflow-hidden">
+                <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                        <h3 id="currSemHeading" class="font-bold text-slate-900 dark:text-white text-base">Current Semester Internal Marks & Faculty Feedback</h3>
+                        <p class="text-xs text-slate-500">Internal Score (40%) + Target Semester Marks (60%) needed for final pass/high score</p>
+                    </div>
+                    <span class="text-xs px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-semibold rounded-lg border border-indigo-200 dark:border-indigo-800">5 Active Courses</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-900/60 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="py-3 px-4">Subject Name</th>
+                                <th class="py-3 px-4 text-center">Internal 1 (50)</th>
+                                <th class="py-3 px-4 text-center">Internal 2 (50)</th>
+                                <th class="py-3 px-4 text-center">Internal Score (40)</th>
+                                <th class="py-3 px-4 text-center">Target for Pass (40+)</th>
+                                <th class="py-3 px-4 text-center">Target for High Score (80+)</th>
+                                <th class="py-3 px-4 text-center">Arrear Risk Level</th>
+                                <th class="py-3 px-4 min-w-[220px]">Teacher Feedback & Advice</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentMarksTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60 text-slate-700 dark:text-slate-300">
+                            <!-- Dynamic Current Semester Rows with Teacher Feedback -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Smart Tips & Growth -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Semester Exam Action Plan & Guidance</h3>
+                        <p class="text-xs text-slate-500">Custom target recommendations to avoid arrears and achieve high scores</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="studentSuggestionsGrid">
+                    <!-- Dynamic Suggestion Cards -->
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: FACULTY DASHBOARD -->
+        <div id="viewFacultyDashboard" class="hidden space-y-6">
+            
+            <!-- Faculty Header -->
+            <div class="bg-gradient-to-r from-purple-900 via-slate-900 to-indigo-900 text-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span id="facDeptBadge" class="px-2.5 py-1 bg-purple-500/30 text-purple-200 border border-purple-400/30 rounded-md text-xs font-semibold">Faculty Dept</span>
+                        <span class="px-2.5 py-1 bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 rounded-md text-xs font-semibold">Staff Access</span>
+                    </div>
+                    <h1 id="facNameHeading" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Faculty Management</h1>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-1">Select a batch to inspect high performers, risk candidates, and manage student feedback.</p>
+                </div>
+            </div>
+
+            <!-- Filters & Batch Selector -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <label class="text-xs font-bold uppercase text-slate-500 whitespace-nowrap">Select Year / Batch:</label>
+                    <select id="facBatchSelect" onchange="loadFacultyStudentList()" class="w-full sm:w-auto px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm font-semibold focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option value="4th Year (2022-2026)">4th Year (Batch 2022-2026)</option>
+                        <option value="3rd Year (2023-2027)">3rd Year (Batch 2023-2027)</option>
+                        <option value="2nd Year (2024-2028)">2nd Year (Batch 2024-2028)</option>
+                        <option value="1st Year (2025-2029)">1st Year (Batch 2025-2029)</option>
+                    </select>
+                </div>
+
+                <div class="text-xs font-semibold text-slate-500">
+                    Total Enrolled: <span id="facStudentCount" class="text-indigo-600 dark:text-indigo-400 font-bold">5</span> Students
+                </div>
+            </div>
+
+            <!-- Top Student (Green Card) & Weak Student (Red Card) Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="facultyHighlightsSection">
+                <!-- High & Weak performing student summary cards render here -->
+            </div>
+
+            <!-- Full Class List Scrollable Container -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700 overflow-hidden">
+                <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-slate-900 dark:text-white text-base"><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Class Roster</h3>
+                        <p class="text-xs text-slate-500">Click on any student to view or edit their subject-wise internal performance and guidance remarks.</p>
+                    </div>
+                </div>
+
+                <!-- Scrollable Student List -->
+                <div class="p-5 max-h-[500px] overflow-y-auto custom-scrollbar space-y-3" id="facultyStudentListContainer">
+                    <!-- Dynamic Interactive Student Items -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: VIEW & EDIT STUDENT FEEDBACK -->
+    <div id="studentDetailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+            
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/60">
+                <div>
+                    <h3 id="modalStudentName" class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        Student Internal Marks & Recommendations
+                    </h3>
+                    <p id="modalStudentSub" class="text-xs text-slate-500">Roll: - | Category: -</p>
+                </div>
+                <button onclick="closeStudentDetailModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto custom-scrollbar flex-grow space-y-4">
+                <div id="modalSubjectFeedbackList" class="space-y-4">
+                    <!-- Subject Feedback Cards -->
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 flex justify-end">
+                <button onclick="closeStudentDetailModal()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TEST CREDENTIALS DOCUMENT -->
+    <div id="credentialsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
+            
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/60">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-file-shield text-indigo-600"></i> Test Credentials Reference
+                    </h3>
+                    <p class="text-xs text-slate-500">30+ Students across 3 Departments & 4 Batches</p>
+                </div>
+                <button onclick="closeCredentialsModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-4 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-200 text-xs flex items-center justify-between">
+                <span><i class="fa-solid fa-key mr-1.5"></i> <strong>Faculty Credentials:</strong> ID: <code>FAC_CSE</code>, <code>FAC_ECE</code>, or <code>FAC_EEE</code> | Password: <code>admin123</code></span>
+            </div>
+
+            <!-- Table Container -->
+            <div class="p-4 overflow-y-auto custom-scrollbar flex-grow">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider sticky top-0">
+                        <tr>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700">Dept</th>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700">Year / Batch</th>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700">Category</th>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700">Roll Number</th>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700">DOB (Password)</th>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700">Student Name</th>
+                            <th class="py-2.5 px-3 border-b dark:border-slate-700 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="credentialsModalTable" class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-700 dark:text-slate-300 font-medium">
+                        <!-- Dynamic Populated List -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 flex justify-end">
+                <button onclick="closeCredentialsModal()" class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-semibold text-xs transition">
+                    Close Window
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT FACULTY REMARKS -->
+    <div id="editRemarkModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-lg overflow-hidden">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/60">
+                <h3 class="font-bold text-slate-900 dark:text-white text-base">Update Faculty Advice / Target</h3>
+                <button onclick="closeEditRemarkModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Student & Subject</label>
+                    <div id="editRemarkTargetInfo" class="text-sm font-bold text-indigo-600 dark:text-indigo-400"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Custom Subject Teacher Advice</label>
+                    <textarea id="editRemarkInput" rows="4" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 flex justify-end gap-2">
+                <button onclick="closeEditRemarkModal()" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold">Cancel</button>
+                <button onclick="saveFacultyRemark()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GLOBAL DATASET SETUP
+        const DEPARTMENTS = ['CSE', 'ECE', 'EEE'];
+        const YEARS = [
+            { year: '4th Year', batch: '2022-2026', label: '4th Year (2022-2026)', currentSem: 'Semester 8', prevSem: 'Semester 7' },
+            { year: '3rd Year', batch: '2023-2027', label: '3rd Year (2023-2027)', currentSem: 'Semester 6', prevSem: 'Semester 5' },
+            { year: '2nd Year', batch: '2024-2028', label: '2nd Year (2024-2028)', currentSem: 'Semester 4', prevSem: 'Semester 3' },
+            { year: '1st Year', batch: '2025-2029', label: '1st Year (2025-2029)', currentSem: 'Semester 2', prevSem: 'Semester 1' }
+        ];
+
+        const SUBJECTS_BY_DEPT = {
+            'CSE': {
+                prev: [
+                    { name: 'Theory of Computation', credits: 4 },
+                    { name: 'Computer Architecture', credits: 3 },
+                    { name: 'Object Oriented Programming', credits: 3 },
+                    { name: 'Discrete Mathematics', credits: 4 }
+                ],
+                curr: ['Data Structures', 'Database Systems', 'Algorithms', 'Operating Systems', 'Computer Networks']
+            },
+            'ECE': {
+                prev: [
+                    { name: 'Electronic Circuits', credits: 4 },
+                    { name: 'Electromagnetic Fields', credits: 3 },
+                    { name: 'Network Analysis', credits: 3 },
+                    { name: 'Engineering Mathematics III', credits: 4 }
+                ],
+                curr: ['Digital Electronics', 'Signals & Systems', 'Microcontrollers', 'VLSI Design', 'Communication Systems']
+            },
+            'EEE': {
+                prev: [
+                    { name: 'Electromechanical Energy', credits: 4 },
+                    { name: 'Analog Electronics', credits: 3 },
+                    { name: 'Field Theory', credits: 3 },
+                    { name: 'Transforms & Complex Variables', credits: 4 }
+                ],
+                curr: ['Circuit Theory', 'Electrical Machines', 'Power Systems', 'Control Systems', 'Power Electronics']
+            }
+        };
+
+        const CATEGORIES = [
+            { type: 'Topper', rank: 1, attendance: 96, int1: [48, 50], int2: [47, 50], prevGpRange: [9, 10] },
+            { type: 'Above Average', rank: 2, attendance: 88, int1: [40, 45], int2: [41, 46], prevGpRange: [8, 9] },
+            { type: 'Average', rank: 3, attendance: 79, int1: [32, 38], int2: [33, 39], prevGpRange: [6, 7] },
+            { type: 'Below Average', rank: 4, attendance: 72, int1: [25, 30], int2: [24, 29], prevGpRange: [5, 6] },
+            { type: 'Arrear Student', rank: 5, attendance: 61, int1: [10, 18], int2: [12, 20], prevGpRange: [0, 5] }
+        ];
+
+        const FIRST_NAMES = [
+            'Aarav', 'Ananya', 'Balaji', 'Deepika', 'Ezhil', 'Gokul', 'Harini', 'Ishaan', 'Janani', 'Karthik',
+            'Kavya', 'Lokesh', 'Meera', 'Naveen', 'Nivedha', 'Pranav', 'Priya', 'Rahul', 'Rithika', 'Sanjay',
+            'Shreya', 'Surya', 'Swetha', 'Thames', 'Varun', 'Vidya', 'Vikram', 'Yashvanth', 'Yuvan', 'Zoya'
+        ];
+        const LAST_NAMES = ['Raman', 'Kumar', 'Sundaram', 'Murugan', 'Venkatesh', 'Natarajan', 'Krishnan', 'Balakrishnan', 'Srinivasan', 'Rajesh'];
+
+        const FACULTY_REMARKS = {
+            'Topper': [
+                'Excellent internal performance! Aim for 90+ in semester exam to secure O Grade.',
+                'Strong command on internal concepts. Keep up the high standard.',
+                'Consistently tops internal assessments. Target university rank grade.',
+                'Very good internal score. Practice previous semester papers to stay on top.',
+                'Outstanding score! Maintain consistency during end-sem preparation.'
+            ],
+            'Above Average': [
+                'Good internal score. Target 75+ in semester exam to achieve an A+ grade.',
+                'Consistent performance. Focus on weak areas to easily touch 80+ in end-sem.',
+                'Solid internal foundation. Revisit key formulas for semester exams.',
+                'Well done! Work on structured long answers to optimize semester marks.',
+                'Regular and attentive. Practice previous test papers for top end-sem scores.'
+            ],
+            'Average': [
+                'Moderate internal marks. Score at least 55+ in semester exam to secure B+ Grade.',
+                'Needs steady preparation. Focus on important 13-mark questions for semester.',
+                'Fair internal average. Avoid careless errors to push final grade to Distinction.',
+                'Target 60+ in semester exam. Daily problem solving will give better results.',
+                'Decent effort. Practice numerical problems daily before semester exams.'
+            ],
+            'Below Average': [
+                'Low internal score. High risk! Must score at least 50+ in semester exam to clear safely.',
+                'Needs urgent focus. Prepare 3 core units thoroughly to pass semester exam.',
+                'At risk of arrear if semester score falls below 45. Focus on passing topics.',
+                'Irregular preparation. Revise essential formulas and past questions daily.',
+                'High arrear threat! Seek tutor guidance immediately and solve question banks.'
+            ],
+            'Arrear Student': [
+                'CRITICAL RISK: Internal score is dangerously low. Must score 55+ in semester exam to avoid Arrear!',
+                'HIGH ARREAR RISK! Daily coaching & mandatory practice of previous papers required.',
+                'Severe backlog risk! Prepare minimum 3 full units step-by-step to reach 40 total.',
+                'Urgent intervention needed. Focus on 2-mark questions and repeated university problems.',
+                'HIGH RISK FOR ARREAR! Meet class advisor urgently for special preparation plan.'
+            ]
+        };
+
+        let studentsData = [];
+        let currentActiveUser = null;
+        let currentEditingTarget = null;
+        let selectedModalStudentRoll = null;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getGradeLetter(gp) {
+            if (gp === 10) return 'O (Outstanding)';
+            if (gp === 9) return 'A+ (Excellent)';
+            if (gp === 8) return 'A (Very Good)';
+            if (gp === 7) return 'B+ (Good)';
+            if (gp === 6) return 'B (Above Average)';
+            if (gp === 5) return 'C (Pass)';
+            return 'U (Re-appear)';
+        }
+
+        function calculateInternalAndTargets(int1, int2) {
+            const intAvg = (int1 + int2) / 2; // out of 50
+            const internalWeighted = Math.round((intAvg / 50) * 40); // converted to 40%
+
+            let targetForPass = Math.ceil((40 - internalWeighted) / 0.6);
+            if (targetForPass < 45) targetForPass = 45; 
+            if (targetForPass > 100) targetForPass = 100;
+
+            let targetForHighScore = Math.ceil((80 - internalWeighted) / 0.6);
+            if (targetForHighScore > 100) targetForHighScore = 100;
+            if (targetForHighScore < 45) targetForHighScore = 45;
+
+            let riskLevel = "Low Risk";
+            let riskColor = "emerald";
+
+            if (internalWeighted < 15) {
+                riskLevel = "HIGH RISK FOR ARREAR";
+                riskColor = "rose";
+            } else if (internalWeighted < 22) {
+                riskLevel = "Moderate Risk";
+                riskColor = "amber";
+            }
+
+            return {
+                internalWeighted,
+                targetForPass,
+                targetForHighScore,
+                riskLevel,
+                riskColor
+            };
+        }
+
+        function generateDataset() {
+            studentsData = [];
+            let nameIdx = 0;
+
+            DEPARTMENTS.forEach((dept, dIdx) => {
+                YEARS.forEach((yr, yIdx) => {
+                    CATEGORIES.forEach((cat, cIdx) => {
+                        const firstName = FIRST_NAMES[nameIdx % FIRST_NAMES.length];
+                        const lastName = LAST_NAMES[(nameIdx + dIdx + yIdx) % LAST_NAMES.length];
+                        nameIdx++;
+
+                        const rollNumber = `${yr.batch.split('-')[0]}${dept}${String(cIdx + 1).padStart(3, '0')}`;
+                        const dobDay = String(getRandomInt(1, 28)).padStart(2, '0');
+                        const dobMonth = String(getRandomInt(1, 12)).padStart(2, '0');
+                        const dobYear = parseInt(yr.batch.split('-')[0]) - 18;
+                        const dobFormatted = `${dobDay}${dobMonth}${dobYear}`;
+
+                        // 1. PREVIOUS SEMESTER
+                        const prevSubjectTemplates = SUBJECTS_BY_DEPT[dept].prev;
+                        let prevTotalCredits = 0;
+                        let prevWeightedPoints = 0;
+
+                        const previousSemSubjects = prevSubjectTemplates.map(pSub => {
+                            let gp = getRandomInt(cat.prevGpRange[0], cat.prevGpRange[1]);
+                            const letterGrade = getGradeLetter(gp);
+                            const status = gp >= 5 ? 'PASS' : 'ARREAR';
+
+                            prevTotalCredits += pSub.credits;
+                            prevWeightedPoints += (gp * pSub.credits);
+
+                            return {
+                                subjectName: pSub.name,
+                                credits: pSub.credits,
+                                gradePoint: gp,
+                                letterGrade: letterGrade,
+                                status: status
+                            };
+                        });
+
+                        const prevSemGPA = (prevWeightedPoints / prevTotalCredits).toFixed(2);
+
+                        // 2. CURRENT SEMESTER
+                        const currentSubjectNames = SUBJECTS_BY_DEPT[dept].curr;
+
+                        const currentSemSubjects = currentSubjectNames.map((subName, sIdx) => {
+                            let int1 = getRandomInt(cat.int1[0], cat.int1[1]);
+                            let int2 = getRandomInt(cat.int2[0], cat.int2[1]);
+
+                            const calc = calculateInternalAndTargets(int1, int2);
+                            const remarkList = FACULTY_REMARKS[cat.type];
+
+                            return {
+                                subjectName: subName,
+                                int1: int1,
+                                int2: int2,
+                                internalWeighted: calc.internalWeighted,
+                                targetForPass: calc.targetForPass,
+                                targetForHighScore: calc.targetForHighScore,
+                                riskLevel: calc.riskLevel,
+                                riskColor: calc.riskColor,
+                                remark: remarkList[sIdx % remarkList.length]
+                            };
+                        });
+
+                        const totalInternalWeighted = currentSemSubjects.reduce((acc, curr) => acc + curr.internalWeighted, 0);
+                        const avgInternalScore = Math.round(totalInternalWeighted / currentSemSubjects.length);
+
+                        studentsData.push({
+                            dept: dept,
+                            year: yr.year,
+                            batch: yr.batch,
+                            batchLabel: yr.label,
+                            currentSemName: yr.currentSem,
+                            prevSemName: yr.prevSem,
+                            category: cat.type,
+                            classRank: cat.rank,
+                            totalClassCount: 5,
+                            rollNumber: rollNumber,
+                            dob: dobFormatted,
+                            name: `${firstName} ${lastName}`,
+                            attendance: cat.attendance,
+                            avgInternalScore: avgInternalScore,
+                            prevSemGPA: prevSemGPA,
+                            prevSemSubjects: previousSemSubjects,
+                            subjects: currentSemSubjects
+                        });
+                    });
+                });
+            });
+        }
+
+        function switchView(viewName) {
+            document.getElementById('viewLanding').classList.add('hidden');
+            document.getElementById('viewStudentDashboard').classList.add('hidden');
+            document.getElementById('viewFacultyDashboard').classList.add('hidden');
+
+            if (viewName === 'landing') {
+                document.getElementById('viewLanding').classList.remove('hidden');
+                document.getElementById('navUserBadge').classList.add('hidden');
+            } else if (viewName === 'student') {
+                document.getElementById('viewStudentDashboard').classList.remove('hidden');
+                document.getElementById('navUserBadge').classList.remove('hidden');
+            } else if (viewName === 'faculty') {
+                document.getElementById('viewFacultyDashboard').classList.remove('hidden');
+                document.getElementById('navUserBadge').classList.remove('hidden');
+            }
+        }
+
+        function switchLoginTab(tab) {
+            const btnStudent = document.getElementById('tabBtnStudent');
+            const btnFaculty = document.getElementById('tabBtnFaculty');
+            const formStudent = document.getElementById('studentLoginForm');
+            const formFaculty = document.getElementById('facultyLoginForm');
+
+            if (tab === 'student') {
+                btnStudent.className = "px-6 py-2.5 rounded-lg text-sm font-bold transition shadow-sm bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400";
+                btnFaculty.className = "px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 transition hover:text-slate-900";
+                formStudent.classList.remove('hidden');
+                formFaculty.classList.add('hidden');
+            } else {
+                btnFaculty.className = "px-6 py-2.5 rounded-lg text-sm font-bold transition shadow-sm bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400";
+                btnStudent.className = "px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 transition hover:text-slate-900";
+                formFaculty.classList.remove('hidden');
+                formStudent.classList.add('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function handleStudentLogin(e) {
+            e.preventDefault();
+            const roll = document.getElementById('studRoll').value.trim().toUpperCase();
+            const dob = document.getElementById('studDob').value.trim();
+            const errBox = document.getElementById('studentLoginError');
+
+            const foundStudent = studentsData.find(s => s.rollNumber.toUpperCase() === roll && s.dob === dob);
+
+            if (foundStudent) {
+                errBox.classList.add('hidden');
+                currentActiveUser = { role: 'student', data: foundStudent };
+                renderStudentDashboard(foundStudent);
+                switchView('student');
+            } else {
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function renderStudentDashboard(student) {
+            document.getElementById('navUserName').innerText = `${student.name} (${student.rollNumber})`;
+            document.getElementById('dashStudentName').innerText = student.name;
+            document.getElementById('dashRollNo').innerText = student.rollNumber;
+            document.getElementById('dashDob').innerText = student.dob;
+            document.getElementById('dashDeptBadge').innerText = `${student.dept} Dept`;
+            document.getElementById('dashYearBadge').innerText = `${student.batchLabel}`;
+            document.getElementById('dashCategoryBadge').innerText = student.category;
+
+            document.getElementById('dashClassRank').innerText = `Rank ${student.classRank} of ${student.totalClassCount}`;
+            document.getElementById('dashRankDetail').innerText = `in ${student.dept} ${student.batchLabel}`;
+
+            document.getElementById('metricCgpa').innerText = `${student.avgInternalScore} / 40`;
+            document.getElementById('metricAttendance').innerText = `${student.attendance}%`;
+
+            let sortedSubs = [...student.subjects].sort((a, b) => b.internalWeighted - a.internalWeighted);
+            document.getElementById('metricStrongSubject').innerText = sortedSubs[0].subjectName;
+            document.getElementById('metricStrongScore').innerText = `${sortedSubs[0].internalWeighted} / 40 Marks`;
+            document.getElementById('metricWeakSubject').innerText = sortedSubs[sortedSubs.length - 1].subjectName;
+            document.getElementById('metricWeakScore').innerText = `${sortedSubs[sortedSubs.length - 1].internalWeighted} / 40 Marks`;
+
+            // PREVIOUS SEMESTER GRADES
+            document.getElementById('prevSemHeading').innerText = `Previous Semester Report (${student.prevSemName})`;
+            document.getElementById('prevSemGpaBadge').innerText = `${student.prevSemName} GPA: ${student.prevSemGPA}`;
+            
+            const prevTbody = document.getElementById('prevSemMarksTableBody');
+            prevTbody.innerHTML = '';
+            student.prevSemSubjects.forEach(pSub => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/30 transition";
+                const isPass = pSub.status === 'PASS';
+                const statusBadge = isPass 
+                    ? `<span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">COMPLETED</span>`
+                    : `<span class="px-2 py-0.5 text-xs font-bold rounded bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">ARREAR</span>`;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">${pSub.subjectName}</td>
+                    <td class="py-3 px-4 text-center font-medium">${pSub.credits} Credits</td>
+                    <td class="py-3 px-4 text-center font-bold text-purple-600 dark:text-purple-400">${pSub.gradePoint}</td>
+                    <td class="py-3 px-4 text-center font-semibold text-slate-700 dark:text-slate-300">${pSub.letterGrade}</td>
+                    <td class="py-3 px-4 text-center">${statusBadge}</td>
+                `;
+                prevTbody.appendChild(tr);
+            });
+
+            // CURRENT SEMESTER INTERNAL BREAKDOWN WITH TEACHER FEEDBACK
+            document.getElementById('currSemHeading').innerText = `Current Active Performance & Faculty Feedback (${student.currentSemName})`;
+            const currTbody = document.getElementById('studentMarksTableBody');
+            currTbody.innerHTML = '';
+            
+            student.subjects.forEach(sub => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/30 transition";
+
+                let riskBadgeClass = "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
+                if (sub.riskColor === 'rose') {
+                    riskBadgeClass = "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 animate-pulse";
+                } else if (sub.riskColor === 'amber') {
+                    riskBadgeClass = "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300";
+                }
+
+                const riskBadge = `<span class="px-2.5 py-1 text-xs font-bold rounded-md ${riskBadgeClass}">${sub.riskLevel}</span>`;
+                const feedbackBlock = `<div class="p-2 bg-indigo-50/70 dark:bg-indigo-950/40 rounded-lg text-xs italic text-indigo-950 dark:text-indigo-200 border border-indigo-100 dark:border-indigo-900/50"><i class="fa-solid fa-comment-dots text-indigo-500 mr-1.5"></i>"${sub.remark}"</div>`;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">${sub.subjectName}</td>
+                    <td class="py-3 px-4 text-center">${sub.int1} / 50</td>
+                    <td class="py-3 px-4 text-center">${sub.int2} / 50</td>
+                    <td class="py-3 px-4 text-center font-bold text-indigo-600 dark:text-indigo-400">${sub.internalWeighted} / 40</td>
+                    <td class="py-3 px-4 text-center font-bold text-amber-600 dark:text-amber-400">${sub.targetForPass} / 100</td>
+                    <td class="py-3 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">${sub.targetForHighScore} / 100</td>
+                    <td class="py-3 px-4 text-center">${riskBadge}</td>
+                    <td class="py-3 px-4">${feedbackBlock}</td>
+                `;
+                currTbody.appendChild(tr);
+            });
+
+            renderStudentSuggestions(student);
+        }
+
+        function renderStudentSuggestions(student) {
+            const container = document.getElementById('studentSuggestionsGrid');
+            container.innerHTML = '';
+            let plans = [];
+
+            if (student.category === 'Topper') {
+                plans = [
+                    { title: 'Aim for O Grade', desc: 'Maintain internal edge by targeting 90+ in end-sem exam to reach 9.0+ GPA.', icon: 'fa-award', color: 'amber' },
+                    { title: 'Question Bank Drills', desc: 'Practice advanced problem-solving to maximize speed in semester exams.', icon: 'fa-book-bookmark', color: 'indigo' },
+                    { title: 'Peer Mentoring', desc: 'Help classmates review core topics to solidify your own exam readiness.', icon: 'fa-users', color: 'emerald' }
+                ];
+            } else if (student.category === 'Above Average') {
+                plans = [
+                    { title: 'Target 80+ for High Score', desc: 'Score above 75 in semester exams to upgrade your final grade to A+.', icon: 'fa-bullseye', color: 'indigo' },
+                    { title: 'Focus on 13-Mark Answers', desc: 'Practice step-by-step written answers to avoid losing marks in theory.', icon: 'fa-pen-to-square', color: 'purple' },
+                    { title: 'Previous Year Papers', desc: 'Solve the last 3 years university question papers before exam week.', icon: 'fa-file-lines', color: 'emerald' }
+                ];
+            } else if (student.category === 'Average') {
+                plans = [
+                    { title: 'Target 60+ in End-Sem', desc: 'A semester score of 60+ will pull your overall mark to a solid B+ grade.', icon: 'fa-chart-line', color: 'emerald' },
+                    { title: 'Daily Study Schedule', desc: 'Allocate 1.5 hours daily for high-weightage numerical problems.', icon: 'fa-clock', color: 'amber' },
+                    { title: 'Faculty Check-ins', desc: 'Clarify tricky topics with subject faculty before the exam date.', icon: 'fa-comments', color: 'indigo' }
+                ];
+            } else if (student.category === 'Below Average') {
+                plans = [
+                    { title: 'HIGH ARREAR RISK WARNING', desc: 'Your internal score is low. You MUST score at least 50+ in semester exam to pass safely!', icon: 'fa-triangle-exclamation', color: 'rose' },
+                    { title: 'Master 3 Essential Units', desc: 'Thoroughly complete 3 units to guarantee required minimum passing marks.', icon: 'fa-list-check', color: 'amber' },
+                    { title: 'Daily Formula Drills', desc: 'Practice key equations & diagrams daily to secure easy 2-mark answers.', icon: 'fa-rotate', color: 'indigo' }
+                ];
+            } else {
+                plans = [
+                    { title: 'HIGH ARREAR RISK - CRITICAL', desc: 'Internal score is dangerously low. Target 55+ in semester exam to clear without backlog!', icon: 'fa-triangle-exclamation', color: 'rose' },
+                    { title: 'Special Remedial Plan', desc: 'Attend mandatory department coaching & solve past question banks.', icon: 'fa-file-signature', color: 'purple' },
+                    { title: 'Advisor Guidance', desc: 'Meet your class advisor weekly to track your end-semester preparation.', icon: 'fa-user-nurse', color: 'indigo' }
+                ];
+            }
+
+            plans.forEach(p => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-2";
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
+                        <i class="fa-solid ${p.icon} text-${p.color}-500"></i> ${p.title}
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${p.desc}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function handleFacultyLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('facId').value.trim().toUpperCase();
+            const pass = document.getElementById('facPass').value.trim();
+            const errBox = document.getElementById('facultyLoginError');
+
+            if ((id === 'FAC_CSE' || id === 'FAC_ECE' || id === 'FAC_EEE') && pass === 'admin123') {
+                errBox.classList.add('hidden');
+                const dept = id.split('_')[1];
+                currentActiveUser = { role: 'faculty', dept: dept };
+                
+                document.getElementById('navUserName').innerText = `Faculty (${dept} Dept)`;
+                document.getElementById('facNameHeading').innerText = `${dept} Department Faculty Hub`;
+                document.getElementById('facDeptBadge').innerText = `${dept} Department`;
+
+                switchView('faculty');
+                loadFacultyStudentList();
+            } else {
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function loadFacultyStudentList() {
+            if (!currentActiveUser || currentActiveUser.role !== 'faculty') return;
+
+            const selectedBatch = document.getElementById('facBatchSelect').value;
+            const dept = currentActiveUser.dept;
+
+            const filteredStudents = studentsData.filter(s => s.dept === dept && s.batchLabel === selectedBatch);
+            document.getElementById('facStudentCount').innerText = filteredStudents.length;
+
+            filteredStudents.sort((a, b) => a.classRank - b.classRank);
+
+            const topStudent = filteredStudents[0];
+            const weakStudent = filteredStudents[filteredStudents.length - 1];
+
+            const highlightsContainer = document.getElementById('facultyHighlightsSection');
+            highlightsContainer.innerHTML = '';
+
+            if (topStudent) {
+                const topCard = document.createElement('div');
+                topCard.className = "bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-2 border-emerald-500 rounded-2xl p-5 shadow-sm cursor-pointer hover:shadow-md transition";
+                topCard.onclick = () => openStudentDetailModal(topStudent.rollNumber);
+                topCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="px-2.5 py-1 bg-emerald-500 text-white font-extrabold text-[10px] rounded-md tracking-wider uppercase inline-block mb-2">
+                                <i class="fa-solid fa-trophy mr-1"></i> Class Rank 1
+                            </span>
+                            <h3 class="text-xl font-extrabold text-emerald-900 dark:text-emerald-300">${topStudent.name}</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">Roll: ${topStudent.rollNumber}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400">${topStudent.avgInternalScore} / 40</span>
+                            <span class="block text-[10px] text-slate-400 font-bold uppercase">Internal Avg</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-emerald-200 dark:border-emerald-800/50 flex justify-between items-center text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+                        <span>Attendance: <strong>${topStudent.attendance}%</strong> | Prev GPA: <strong>${topStudent.prevSemGPA}</strong></span>
+                        <span class="text-xs text-indigo-600 dark:text-indigo-400 font-bold underline">Edit Advice <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                    </div>
+                `;
+                highlightsContainer.appendChild(topCard);
+            }
+
+            if (weakStudent) {
+                const weakCard = document.createElement('div');
+                weakCard.className = "bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent border-2 border-rose-500 rounded-2xl p-5 shadow-sm cursor-pointer hover:shadow-md transition";
+                weakCard.onclick = () => openStudentDetailModal(weakStudent.rollNumber);
+                weakCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="px-2.5 py-1 bg-rose-600 text-white font-extrabold text-[10px] rounded-md tracking-wider uppercase inline-block mb-2">
+                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> HIGH ARREAR RISK
+                            </span>
+                            <h3 class="text-xl font-extrabold text-rose-900 dark:text-rose-300">${weakStudent.name}</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">Roll: ${weakStudent.rollNumber}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl font-black text-rose-600 dark:text-rose-400">${weakStudent.avgInternalScore} / 40</span>
+                            <span class="block text-[10px] text-slate-400 font-bold uppercase">Internal Avg</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-rose-200 dark:border-rose-800/50 flex justify-between items-center text-xs text-rose-800 dark:text-rose-300 font-medium">
+                        <span>Attendance: <strong>${weakStudent.attendance}%</strong> | Prev GPA: <strong>${weakStudent.prevSemGPA}</strong></span>
+                        <span class="text-xs text-indigo-600 dark:text-indigo-400 font-bold underline">Edit Advice <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                    </div>
+                `;
+                highlightsContainer.appendChild(weakCard);
+            }
+
+            const scrollContainer = document.getElementById('facultyStudentListContainer');
+            scrollContainer.innerHTML = '';
+
+            filteredStudents.forEach(st => {
+                const item = document.createElement('div');
+                item.className = "p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 hover:border-indigo-300 transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+                item.onclick = () => openStudentDetailModal(st.rollNumber);
+
+                let rankBadge = `<span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">Rank ${st.classRank}</span>`;
+                if (st.classRank === 1) rankBadge = `<span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Rank 1</span>`;
+                else if (st.classRank === 5) rankBadge = `<span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">HIGH RISK</span>`;
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold flex items-center justify-center text-sm">
+                            ${st.name.charAt(0)}
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">${st.name}</h4>
+                            <p class="text-xs text-slate-500 font-mono">Roll: ${st.rollNumber} | DOB: ${st.dob} | ${st.category}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 self-end sm:self-auto">
+                        <div class="text-right">
+                            <span class="text-xs text-slate-500 block">Internal Score: <strong>${st.avgInternalScore} / 40</strong></span>
+                            <span class="text-xs text-slate-500 block">Prev GPA: <strong>${st.prevSemGPA}</strong></span>
+                        </div>
+                        ${rankBadge}
+                        <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
+                    </div>
+                `;
+                scrollContainer.appendChild(item);
+            });
+        }
+
+        function openStudentDetailModal(rollNumber) {
+            const student = studentsData.find(s => s.rollNumber === rollNumber);
+            if (!student) return;
+
+            selectedModalStudentRoll = rollNumber;
+            document.getElementById('modalStudentName').innerText = `${student.name} (${student.rollNumber})`;
+            document.getElementById('modalStudentSub').innerText = `Dept: ${student.dept} | Batch: ${student.batchLabel} | Category: ${student.category}`;
+
+            const feedbackContainer = document.getElementById('modalSubjectFeedbackList');
+            feedbackContainer.innerHTML = '';
+
+            student.subjects.forEach((sub, idx) => {
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 space-y-2";
+                
+                let riskClass = "text-emerald-600 dark:text-emerald-400";
+                if (sub.riskColor === 'rose') riskClass = "text-rose-600 dark:text-rose-400 font-extrabold";
+                else if (sub.riskColor === 'amber') riskClass = "text-amber-600 dark:text-amber-400 font-bold";
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-900 dark:text-white text-sm">${sub.subjectName}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400">Internal: ${sub.internalWeighted}/40</span>
+                            <span class="text-xs ${riskClass}">${sub.riskLevel}</span>
+                            <button onclick="openEditRemarkModal('${student.rollNumber}', ${idx})" class="px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 rounded font-bold text-[11px] hover:bg-indigo-200 transition">
+                                <i class="fa-solid fa-pen mr-1"></i>Edit Advice
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-500 flex gap-4">
+                        <span>Target Pass: <strong>${sub.targetForPass}/100</strong></span>
+                        <span>Target High Score: <strong>${sub.targetForHighScore}/100</strong></span>
+                    </div>
+                    <div class="p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 text-xs italic text-slate-600 dark:text-slate-300">
+                        "${sub.remark}"
+                    </div>
+                `;
+                feedbackContainer.appendChild(card);
+            });
+
+            document.getElementById('studentDetailModal').classList.remove('hidden');
+        }
+
+        function closeStudentDetailModal() {
+            document.getElementById('studentDetailModal').classList.add('hidden');
+            selectedModalStudentRoll = null;
+        }
+
+        function openEditRemarkModal(rollNumber, subjectIndex) {
+            const student = studentsData.find(s => s.rollNumber === rollNumber);
+            if (!student) return;
+
+            const subject = student.subjects[subjectIndex];
+            currentEditingTarget = { rollNumber, subjectIndex };
+
+            document.getElementById('editRemarkTargetInfo').innerText = `${student.name} (${student.rollNumber}) - ${subject.subjectName}`;
+            document.getElementById('editRemarkInput').value = subject.remark;
+            document.getElementById('editRemarkModal').classList.remove('hidden');
+        }
+
+        function closeEditRemarkModal() {
+            document.getElementById('editRemarkModal').classList.add('hidden');
+            currentEditingTarget = null;
+        }
+
+        function saveFacultyRemark() {
+            if (!currentEditingTarget) return;
+
+            const newText = document.getElementById('editRemarkInput').value.trim();
+            if (!newText) return;
+
+            const student = studentsData.find(s => s.rollNumber === currentEditingTarget.rollNumber);
+            if (student) {
+                student.subjects[currentEditingTarget.subjectIndex].remark = newText;
+                closeEditRemarkModal();
+
+                if (selectedModalStudentRoll === student.rollNumber) {
+                    openStudentDetailModal(student.rollNumber);
+                }
+                if (currentActiveUser && currentActiveUser.role === 'student') {
+                    renderStudentDashboard(student);
+                }
+                if (currentActiveUser && currentActiveUser.role === 'faculty') {
+                    loadFacultyStudentList();
+                }
+            }
+        }
+
+        function openCredentialsModal() {
+            const tableBody = document.getElementById('credentialsModalTable');
+            tableBody.innerHTML = '';
+
+            studentsData.forEach(st => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/40 transition border-b border-slate-100 dark:border-slate-800";
+                
+                let catClass = "text-slate-600 dark:text-slate-400";
+                if (st.category === 'Topper') catClass = "text-amber-600 dark:text-amber-400 font-bold";
+                else if (st.category === 'Arrear Student') catClass = "text-rose-600 dark:text-rose-400 font-bold";
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-bold">${st.dept}</td>
+                    <td class="py-2.5 px-3">${st.batchLabel}</td>
+                    <td class="py-2.5 px-3 ${catClass}">${st.category}</td>
+                    <td class="py-2.5 px-3 font-mono font-bold text-indigo-600 dark:text-indigo-400">${st.rollNumber}</td>
+                    <td class="py-2.5 px-3 font-mono text-slate-700 dark:text-slate-300">${st.dob}</td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-900 dark:text-white">${st.name}</td>
+                    <td class="py-2.5 px-3 text-right">
+                        <button onclick="fillLoginCredentials('${st.rollNumber}', '${st.dob}')" class="px-2.5 py-1 text-[11px] bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-300 rounded font-bold transition">
+                            Autofill
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            document.getElementById('credentialsModal').classList.remove('hidden');
+        }
+
+        function closeCredentialsModal() {
+            document.getElementById('credentialsModal').classList.add('hidden');
+        }
+
+        function fillLoginCredentials(roll, dob) {
+            switchLoginTab('student');
+            document.getElementById('studRoll').value = roll;
+            document.getElementById('studDob').value = dob;
+            closeCredentialsModal();
+        }
+
+        function logout() {
+            currentActiveUser = null;
+            switchView('landing');
+        }
+
+        window.onload = function() {
+            generateDataset();
+            switchView('landing');
+        };
+    </script>
+</body>
+</html>
