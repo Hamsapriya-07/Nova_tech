@@ -27,7 +27,7 @@ Interactive Web Dashboard Prototype for Academic Data Analytics and Student Metr
 ---
 
 ## 📊 System Architecture & Workflow
----
+
 
 ## 🛠 Tech Stack
 
@@ -43,6 +43,4 @@ Interactive Web Dashboard Prototype for Academic Data Analytics and Student Metr
 > ⚠️ **Note:** This repository hosts an early-stage **Proof of Concept (PoC)** built for interactive academic presentation and live testing.
 
 ---
-<p align="center">
-  <i>Developed with ❤️ for Academic Presentation</i>
-</p>
+
